@@ -2,13 +2,12 @@ import xarray as xr
 import numpy as np
 from sklearn.decomposition import PCA, FastICA
 
-def PCA_wrapper(ds,number_of_PCs = 3, var="t",level=300m, coord_name="coord") :
+def PCA_wrapper(ds,number_of_PCs = 3, level=300, coord_name="coord") :
     """PCA wrapper for xarray
 
     Args:
         ds (xarray.Dataset): xarray dataset with 2 coordinates: first is usually time, second is lon, lat stacked
         number_of_PCs (int, optional): number of principal components to calculate. Defaults to 3.
-        var (str, optional): varaibles name. Defaults to "t".
         level (int, optional): vertical level in hPa. Defaults to 300.
         coord_name (string, optional) : name of geographical (stacked) coordinate
 
@@ -16,8 +15,8 @@ def PCA_wrapper(ds,number_of_PCs = 3, var="t",level=300m, coord_name="coord") :
         _type_: _description_
     """
     explained_variance = np.zeros(number_of_PCs)
-    da = ds.fillna(0).sel(isobaricInhPa=level).t.load()
-
+    da = ds.fillna(0).load()
+    
     principal= PCA(n_components=number_of_PCs)
     principal.fit(da)
     time_series = principal.transform(da)
